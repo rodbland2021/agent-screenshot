@@ -1,6 +1,8 @@
 # agent-screenshot
 
+[![CI](https://github.com/rodbland2021/agent-screenshot/actions/workflows/ci.yml/badge.svg)](https://github.com/rodbland2021/agent-screenshot/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](CHANGELOG.md)
 
 **Two tools for giving AI agents eyes.** Automated web screenshots with Vision-optimised tiling, plus desktop screen capture.
 
