@@ -6,8 +6,10 @@
 
 **Two tools for giving AI agents eyes.** Automated web screenshots with Vision-optimised tiling, plus desktop screen capture.
 
+**[Blog post: Why these tools exist and how I use them](https://rodbland.com/blog/screenshot-and-grab-tools/)**
+
 ```bash
-# Screenshot a web page (tiled for Claude Vision)
+# Screenshot a web page (tiled for AI Vision models)
 python screenshot.py https://example.com --full-page
 
 # Capture your desktop screen
