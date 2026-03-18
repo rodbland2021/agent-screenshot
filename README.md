@@ -55,7 +55,7 @@ python screenshot.py https://example.com --full-page
 python screenshot.py https://example.com --dismiss-popups --wait-until load --wait 3000
 
 # Custom auth header
-python screenshot.py https://internal-app.com --header "Authorization=Bearer mytoken"
+python screenshot.py https://my-app.example.com --header "Authorization=Bearer mytoken"
 
 # Screenshot a specific element
 python screenshot.py https://example.com --selector ".hero-section"
