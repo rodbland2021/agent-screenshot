@@ -104,7 +104,7 @@ def screenshot(
     result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
 
     if result.returncode != 0:
-        return f"Error: {result.stderr.strip()}"
+        return result.stderr.strip()
 
     # stdout has file paths (one per line), stderr has info messages
     paths = [p for p in result.stdout.strip().split("\n") if p and os.path.exists(p)]
@@ -146,7 +146,7 @@ def grab(
     result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
 
     if result.returncode != 0:
-        return f"Error: {result.stderr.strip()}"
+        return result.stderr.strip()
 
     path = result.stdout.strip().split("\n")[0]
     info = result.stderr.strip()

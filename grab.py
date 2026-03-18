@@ -51,7 +51,7 @@ def main():
 
     if args.region not in REGIONS:
         valid = ", ".join(sorted(REGIONS.keys()))
-        print(f"Error: unknown region '{args.region}'.\nValid regions: {valid}", file=sys.stderr)
+        print(f"Unknown region '{args.region}'. Valid regions: {valid}", file=sys.stderr)
         sys.exit(1)
 
     try:
@@ -66,11 +66,11 @@ def main():
     except Exception as e:
         err = str(e)
         if "DISPLAY" in err or "display" in err:
-            print("ERROR: No display available. grab.py requires a physical or virtual display "
+            print("No display available. grab.py requires a physical or virtual display "
                   "(X11, Wayland, macOS desktop, or Windows). It cannot run on headless servers.",
                   file=sys.stderr)
         else:
-            print(f"ERROR: Screen capture failed: {e}", file=sys.stderr)
+            print(f"Screen capture failed: {e}", file=sys.stderr)
         sys.exit(1)
 
     with sct_ctx as sct:

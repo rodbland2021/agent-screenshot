@@ -143,7 +143,7 @@ def main():
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
-        print("ERROR: playwright not installed. Run: pip install playwright && playwright install chromium",
+        print("Playwright not installed. Run: pip install playwright && playwright install chromium",
               file=sys.stderr)
         sys.exit(1)
 
@@ -170,11 +170,11 @@ def main():
                     page.goto(args.url, wait_until="load", timeout=60000)
                     page.wait_for_timeout(3000)
                 except Exception as e2:
-                    print(f"ERROR: Navigation failed on retry: {e2}", file=sys.stderr)
+                    print(f"Navigation failed on retry: {e2}", file=sys.stderr)
                     browser.close()
                     sys.exit(1)
             else:
-                print(f"ERROR: Navigation failed: {e}", file=sys.stderr)
+                print(f"Navigation failed: {e}", file=sys.stderr)
                 browser.close()
                 sys.exit(1)
 
@@ -189,7 +189,7 @@ def main():
         if args.selector:
             el = page.query_selector(args.selector)
             if not el:
-                print(f"ERROR: Selector '{args.selector}' not found on page", file=sys.stderr)
+                print(f"Selector '{args.selector}' not found on page", file=sys.stderr)
                 browser.close()
                 sys.exit(1)
             path = os.path.join(args.out, f"{base_name}_element.{ext}")
