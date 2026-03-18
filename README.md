@@ -28,6 +28,13 @@ pip install -r requirements.txt
 playwright install chromium
 ```
 
+Verify it works:
+
+```bash
+python screenshot.py https://example.com
+# Should print a file path like /tmp/screenshots/example-com_1234567890.jpg
+```
+
 ## Screenshot tool
 
 Takes automated screenshots of any URL using headless Chromium.
@@ -80,6 +87,8 @@ The tool handles this automatically with `--full-page`. A long page produces 4-8
 
 Captures the physical desktop screen. Useful for sharing visual context that isn't a web page — design mockups, spreadsheets, error dialogs, anything on your monitor.
 
+> **Requires a display.** `grab.py` needs X11 or Wayland (Linux), a desktop session (macOS/Windows), or a virtual framebuffer (`Xvfb`). It will not work on headless servers, Docker containers, or CI runners without a display server.
+
 ```bash
 # Full screen
 python grab.py
@@ -122,9 +131,9 @@ Read the resulting screenshots and check for visual regressions.
 ## Requirements
 
 - Python 3.10+
-- Playwright + Chromium (for `screenshot.py`)
-- mss + Pillow (for `grab.py`)
-- Linux, macOS, or Windows (including WSL)
+- **screenshot.py**: Playwright + Chromium. Works on any platform including headless servers, Docker, and CI.
+- **grab.py**: mss + Pillow. Requires a physical or virtual display (X11, Wayland, macOS desktop, or Windows).
+- Tested on Linux, macOS, and Windows (including WSL).
 
 ## License
 

@@ -108,7 +108,15 @@ def main():
                         help="Custom HTTP header as KEY=VALUE (repeatable)")
     args = parser.parse_args()
 
-    vw = min(args.width, 1072)
+    # Validate quality range before Playwright gets it
+    if not 0 <= args.quality <= 100:
+        parser.error(f"--quality must be between 0 and 100, got {args.quality}")
+
+    vw = args.width
+    if vw > 1072 and not args.mobile:
+        print(f"WARNING: --width {vw} exceeds 1072 (max for Vision-optimised output), capping to 1072",
+              file=sys.stderr)
+        vw = 1072
     vh = 812 if args.mobile else args.height
     if args.mobile:
         vw = 375
@@ -192,40 +200,43 @@ def main():
             full_path = os.path.join(args.out, f"{base_name}_full.png")
             page.screenshot(path=full_path, full_page=True, type="png")
 
-            from PIL import Image
-            img = Image.open(full_path)
-            w, h = img.size
+            try:
+                from PIL import Image
+                img = Image.open(full_path)
+                w, h = img.size
 
-            if h > args.max_height:
-                print(f"WARNING: Page height {h}px exceeds max {args.max_height}px, truncating",
-                      file=sys.stderr)
-                img = img.crop((0, 0, w, args.max_height))
-                h = args.max_height
+                if h > args.max_height:
+                    print(f"WARNING: Page height {h}px exceeds max {args.max_height}px, truncating",
+                          file=sys.stderr)
+                    img = img.crop((0, 0, w, args.max_height))
+                    h = args.max_height
 
-            cols = math.ceil(w / TILE_SIZE)
-            rows = math.ceil(h / TILE_SIZE)
-            tile_count = 0
+                cols = math.ceil(w / TILE_SIZE)
+                rows = math.ceil(h / TILE_SIZE)
+                tile_count = 0
 
-            for row in range(rows):
-                for col in range(cols):
-                    x = col * TILE_SIZE
-                    y = row * TILE_SIZE
-                    tile_w = min(TILE_SIZE, w - x)
-                    tile_h = min(TILE_SIZE, h - y)
-                    tile = img.crop((x, y, x + tile_w, y + tile_h))
-                    tile_path = os.path.join(args.out, f"{base_name}_tile_{row}_{col}.{ext}")
+                for row in range(rows):
+                    for col in range(cols):
+                        x = col * TILE_SIZE
+                        y = row * TILE_SIZE
+                        tile_w = min(TILE_SIZE, w - x)
+                        tile_h = min(TILE_SIZE, h - y)
+                        tile = img.crop((x, y, x + tile_w, y + tile_h))
+                        tile_path = os.path.join(args.out, f"{base_name}_tile_{row}_{col}.{ext}")
 
-                    if fmt == "jpeg":
-                        tile = tile.convert("RGB")
-                        tile.save(tile_path, "JPEG", quality=args.quality)
-                    else:
-                        tile.save(tile_path, "PNG")
+                        if fmt == "jpeg":
+                            tile = tile.convert("RGB")
+                            tile.save(tile_path, "JPEG", quality=args.quality)
+                        else:
+                            tile.save(tile_path, "PNG")
 
-                    saved_paths.append(tile_path)
-                    tile_count += 1
+                        saved_paths.append(tile_path)
+                        tile_count += 1
 
-            os.remove(full_path)
-            print(f"Page: {w}x{h}px -> {tile_count} tiles ({TILE_SIZE}x{TILE_SIZE})", file=sys.stderr)
+                print(f"Page: {w}x{h}px -> {tile_count} tiles ({TILE_SIZE}x{TILE_SIZE})", file=sys.stderr)
+            finally:
+                if os.path.exists(full_path):
+                    os.remove(full_path)
 
         else:
             path = os.path.join(args.out, f"{base_name}.{ext}")
