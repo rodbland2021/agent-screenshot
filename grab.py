@@ -43,12 +43,16 @@ REGIONS = {
 def main():
     parser = argparse.ArgumentParser(description="Capture desktop screen for AI agent context")
     parser.add_argument("region", nargs="?", default="full",
-                        choices=list(REGIONS.keys()),
                         help="Screen region to capture (default: full)")
     parser.add_argument("--out", default="/tmp/screen.jpg", help="Output file path")
     parser.add_argument("--quality", type=int, default=85, help="JPEG quality (1-100)")
     parser.add_argument("--monitor", type=int, default=1, help="Monitor number (default: 1)")
     args = parser.parse_args()
+
+    if args.region not in REGIONS:
+        valid = ", ".join(sorted(REGIONS.keys()))
+        print(f"Error: unknown region '{args.region}'.\nValid regions: {valid}", file=sys.stderr)
+        sys.exit(1)
 
     try:
         import mss
