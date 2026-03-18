@@ -57,7 +57,19 @@ def main():
         print("ERROR: Install dependencies: pip install mss Pillow", file=sys.stderr)
         sys.exit(1)
 
-    with mss.mss() as sct:
+    try:
+        sct_ctx = mss.mss()
+    except Exception as e:
+        err = str(e)
+        if "DISPLAY" in err or "display" in err:
+            print("ERROR: No display available. grab.py requires a physical or virtual display "
+                  "(X11, Wayland, macOS desktop, or Windows). It cannot run on headless servers.",
+                  file=sys.stderr)
+        else:
+            print(f"ERROR: Screen capture failed: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    with sct_ctx as sct:
         if args.monitor > len(sct.monitors) - 1:
             print(f"ERROR: Monitor {args.monitor} not found. Available: {len(sct.monitors) - 1}",
                   file=sys.stderr)
