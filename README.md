@@ -115,9 +115,60 @@ python grab.py --out /tmp/my-capture.jpg
 | `--quality` | 85 | JPEG quality (1-100) |
 | `--monitor` | 1 | Monitor number for multi-display setups |
 
-## Add to your AI agent
+## MCP server (native agent integration)
 
-The real value is making screenshots automatic. Add this to your agent's instructions:
+The MCP server gives AI agents direct tool access — no shell commands needed. The agent calls `screenshot` or `grab` as native tools.
+
+### Claude Code
+
+Add to `~/.claude.json`:
+
+```json
+{
+  "mcpServers": {
+    "agent-screenshot": {
+      "command": "python3",
+      "args": ["/path/to/agent-screenshot/mcp_server.py"]
+    }
+  }
+}
+```
+
+Restart Claude Code. The agent now has `screenshot` and `grab` tools available natively.
+
+### OpenClaw / mcporter
+
+Add to your MCP config (e.g. `~/.mcporter/mcporter.json`):
+
+```json
+{
+  "mcpServers": {
+    "agent-screenshot": {
+      "command": "python3",
+      "args": ["/path/to/agent-screenshot/mcp_server.py"]
+    }
+  }
+}
+```
+
+### MCP tool reference
+
+| Tool | Parameters | Description |
+|------|-----------|-------------|
+| `screenshot` | `url`, `full_page`, `mobile`, `dismiss_popups`, `selector`, `wait_ms`, `quality`, `headers` | Screenshot a URL, optionally tiled for Vision |
+| `grab` | `region`, `output_path`, `quality`, `monitor` | Capture desktop screen |
+
+### Additional dependency
+
+The MCP server requires the `mcp` package in addition to the base requirements:
+
+```bash
+pip install mcp
+```
+
+## Add to your agent's instructions
+
+For agents that don't support MCP (or as a fallback), add to your agent's instructions:
 
 **Claude Code** (`CLAUDE.md`):
 ```markdown
@@ -126,14 +177,14 @@ python /path/to/screenshot.py <url> --full-page
 Read the resulting screenshots and check for visual regressions.
 ```
 
-**Cursor** (`.cursorrules`), **Aider** (`.aider.conf.yml`), **OpenClaw** (agent system prompt) — same instruction, adapted to your config format.
+**Cursor** (`.cursorrules`), **Aider** (`.aider.conf.yml`), **[OpenClaw](https://github.com/openclaw/openclaw)** (agent system prompt) — same instruction, adapted to your config format.
 
 ## Requirements
 
-- Python 3.10+
+- **Python 3.10+** on Linux, macOS, or Windows (including WSL)
 - **screenshot.py**: Playwright + Chromium. Works on any platform including headless servers, Docker, and CI.
 - **grab.py**: mss + Pillow. Requires a physical or virtual display (X11, Wayland, macOS desktop, or Windows).
-- Tested on Linux, macOS, and Windows (including WSL).
+- **mcp_server.py** (optional): `mcp` package. For native tool integration with Claude Code and OpenClaw.
 
 ## License
 
