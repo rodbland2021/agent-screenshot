@@ -21,7 +21,7 @@ jobs:
         run: pip install ruff
 
       - name: Ruff F821 (undefined names)
-        run: ruff check --select F821 .
+        run: ruff check --isolated --select F821 .
 
       - name: Syntax check
         run: python -m py_compile screenshot.py && python -m py_compile grab.py && python -m py_compile mcp_server.py
